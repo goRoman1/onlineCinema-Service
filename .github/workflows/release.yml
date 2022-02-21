@@ -1,0 +1,82 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  USERS_IMAGE_NAME: "cinema-users"
+  MOVIES_IMAGE_NAME: "cinema-movies"
+  SHOWTIMES_IMAGE_NAME: "cinema-showtimes"
+  BOOKINGS_IMAGE_NAME: "cinema-bookings"
+  WEBSITE_IMAGE_NAME: "cinema-website"
+
+jobs:
+  multi-registries:
+    name: "Build"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      - name: Build and push users microservice
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: ./users/
+          file: ./users/Dockerfile
+          tags: |
+            goRoman1/${{ env.USERS_IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+            ghcr.io/goRoman1/${{ env.USERS_IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+      - name: Build and push website microservice
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: ./website/
+          file: ./website/Dockerfile
+          tags: |
+            goRoman1/${{ env.WEBSITE_IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+            ghcr.io/goRoman1/${{ env.WEBSITE_IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+      - name: Build and push movies microservice
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: ./movies/
+          file: ./movies/Dockerfile
+          tags: |
+            goRoman1/${{ env.MOVIES_IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+            ghcr.io/goRoman1/${{ env.MOVIES_IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+      - name: Build and push showtimes microservice
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: ./showtimes/
+          file: ./showtimes/Dockerfile
+          tags: |
+            goRoman1/${{ env.SHOWTIMES_IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+            ghcr.io/goRoman1/${{ env.SHOWTIMES_IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+      - name: Build and push bookings microservice
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: ./bookings/
+          file: ./bookings/Dockerfile
+          tags: |
+            goRoman1/${{ env.BOOKINGS_IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+            ghcr.io/goRoman1/${{ env.BOOKINGS_IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}

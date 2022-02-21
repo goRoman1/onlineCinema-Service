@@ -1,0 +1,89 @@
+version: "3.8"
+services:
+  proxy:
+    image: traefik:v2.4.2
+    command:
+      - "--log.level=DEBUG"
+      - "--api=true"
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--providers.docker"
+      - "--entrypoints.web.address=:80"
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+
+  website:
+    image: ghcr.io/goRoman1/cinema-website:v1.0.0
+    command:
+      - "-usersAPI"
+      - "http://users:4000/api/users/"
+      - "-moviesAPI"
+      - "http://movies:4000/api/movies/"
+      - "-showtimesAPI"
+      - "http://showtimes:4000/api/showtimes/"
+      - "-bookingsAPI"
+      - "http://bookings:4000/api/bookings/"
+
+  movies:
+    image: ghcr.io/goRoman1/cinema-movies:v1.0.0
+    command:
+      - "-mongoURI"
+      - "mongodb://db:27017/"
+    #   - "-enableCredentials"
+    #   - "true"
+    # environment:
+    #   MONGODB_USERNAME: "demo"
+    #   MONGODB_PASSWORD: "e3LBVTPdlzxYbxt9"
+
+  bookings:
+    image: ghcr.io/goRoman1/cinema-bookings:v1.0.0
+    command:
+      - "-mongoURI"
+      - "mongodb://db:27017/"
+    #   - "-enableCredentials"
+    #   - "true"
+    # environment:
+    #   MONGODB_USERNAME: "demo"
+    #   MONGODB_PASSWORD: "e3LBVTPdlzxYbxt9"
+
+  showtimes:
+    image: ghcr.io/goRoman1/cinema-showtimes:v1.0.0
+    command:
+      - "-mongoURI"
+      - "mongodb://db:27017/"
+    #   - "-enableCredentials"
+    #   - "true"
+    # environment:
+    #   MONGODB_USERNAME: "demo"
+    #   MONGODB_PASSWORD: "e3LBVTPdlzxYbxt9"
+
+  users:
+    # build: ./users
+    image: ghcr.io/goRoman1/cinema-users:v1.0.0
+    command:
+      - "-mongoURI"
+      - "mongodb://db:27017/"
+    #   - "-enableCredentials"
+    #   - "true"
+    # environment:
+    #   MONGODB_USERNAME: "demo"
+    #   MONGODB_PASSWORD: "e3LBVTPdlzxYbxt9"
+
+  db:
+    image: mongo:4.2.11
+    volumes:
+      - type: bind
+        source: ./backup
+        target: /backup

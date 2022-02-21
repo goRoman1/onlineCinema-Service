@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/goRoman1/onlineCinema-Service/issues"
   },
-  "homepage": "https://github.com/goRoman1/onlineCinema-Service#readme"
+  "homepage": "https://github.com/goRoman1/onlineCinema-Service#readme",
+  "publishConfig": {
+    "@goRoman1:registry": "https://npm.pkg.github.com"
+  }
 }
