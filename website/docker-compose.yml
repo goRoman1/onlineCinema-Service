@@ -1,0 +1,61 @@
+version: "3.8"
+services:
+  website:
+    image: cinema-website
+    command:
+      - "-usersAPI"
+      - "http://users:4000/api/users/"
+      - "-moviesAPI"
+      - "http://movies:4000/api/movies/"
+      - "-showtimesAPI"
+      - "http://showtimes:4000/api/showtimes/"
+      - "-bookingsAPI"
+      - "http://bookings:4000/api/bookings/"
+
+  movies:
+    image: cinema-movies
+    command:
+      - "-mongoURI"
+      - "mongodb://db:27017/"
+      - "-enableCredentials"
+      - "true"
+    environment:
+      MONGODB_USERNAME: "rom"
+      MONGODB_PASSWORD: "hi31user"
+
+  bookings:
+    # build: ./bookings
+    image: ghcr.io/mmorejon/cinema-bookings:v2.1.2
+    command:
+      - "-mongoURI"
+      - "mongodb://db:27017/"
+      - "-enableCredentials"
+      - "true"
+    environment:
+      MONGODB_USERNAME: "rom"
+      MONGODB_PASSWORD: "hi31user"
+
+  showtimes:
+    image: cinema-showtimes
+    command:
+      - "-mongoURI"
+      - "mongodb://db:27017/"
+      - "-enableCredentials"
+      - "true"
+    environment:
+      MONGODB_USERNAME: "rom"
+      MONGODB_PASSWORD: "hi31user"
+
+  users:
+    image: cinema-users
+    command:
+      - "-mongoURI"
+      - "mongodb://db:27017/"
+      - "-enableCredentials"
+      - "true"
+    environment:
+      MONGODB_USERNAME: "rom"
+      MONGODB_PASSWORD: "hi31user"
+
+  db:
+    image: mongo:4.2.11
