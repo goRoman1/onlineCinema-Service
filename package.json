@@ -1,0 +1,19 @@
+{
+  "name": "onlinecinema-service",
+  "version": "1.0.0",
+  "description": "cinema microservices",
+  "main": "index.js",
+  "scripts": {
+    "test": "exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/goRoman1/onlineCinema-Service.git"
+  },
+  "author": "Amelcheko Roman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/goRoman1/onlineCinema-Service/issues"
+  },
+  "homepage": "https://github.com/goRoman1/onlineCinema-Service#readme"
+}
